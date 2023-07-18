@@ -46,10 +46,13 @@
         border-radius: 20px;
     }
     #in{
-        text-align: center;
         margin: 0;
         padding: 0;
         width: 320px;
         height: 80px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 </style>
