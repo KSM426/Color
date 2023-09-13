@@ -1,17 +1,25 @@
 <script>
 	import D0 from "./design/design0.svelte"
+	import D1 from "./design/design1.svelte"
+	import D2 from "./design/design2.svelte"
+	import D3 from "./design/design3.svelte"
 
 	let title;
 	let colors = [
 		"A0C49D", "C4D7B2", "E1ECC8", "000000"
 	];
 	let data=[];
-	let design = 0;
+	let design = 3;
 
 	function saveColor(){
 		data.push({title, colors})
 		data = data
 		console.log(data.length)
+	}
+
+	function changeDesign(n){
+		design = n;
+		console.log(design);
 	}
 </script>
 
@@ -22,13 +30,17 @@
 	</div>
 
 	<div id="content">
-		<D0 {colors}/>
+		{#if design==0} <D0 {colors}/>
+		{:else if design==1} <D1 {colors}/>
+		{:else if design==2} <D2 {colors}/>
+		{:else if design==3} <D3 {colors}/>
+		{/if}
 
 		<div class="design">
-			<div id="base"></div>
-			<div id="line"></div>
-			<div id="circle"></div>
-			<div id="frame"></div>
+			<button class="designButton" id="base" on:click={()=>changeDesign('0')}>Base</button>
+			<button class="designButton" id="line" on:click={()=>changeDesign('1')}>Line</button>
+			<button class="designButton" id="circle" on:click={()=>changeDesign('2')}>Circle</button>
+			<button class="designButton" id="frame" on:click={()=>changeDesign('3')}>Frame</button>
 		</div>
 		
 		<div class="board">
@@ -56,6 +68,9 @@
 	input{
 		margin: 0;
 		padding: 0;
+	}
+	button:hover{
+		background-color: bisque;
 	}
 	#top{
 		position: relative;
@@ -85,6 +100,21 @@
 		flex-direction: column;
 		align-items: center;
 	}
+		.design{
+			width: 320px;
+			height: 40px;
+			margin: 0;
+
+			display: flex;
+			flex-direction: row;
+		}
+			.designButton{
+				background-color: beige;
+				width: 80px;
+				height: 40px;
+				margin: 0;
+				padding: 0;
+			}
 		.board{
 			width: 340px;
 			height: 250px;
