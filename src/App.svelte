@@ -3,6 +3,7 @@
 	import D1 from "./design/design1.svelte"
 	import D2 from "./design/design2.svelte"
 	import D3 from "./design/design3.svelte"
+	import Dp from "./designPopup.svelte"
 	import "./app.css"
 
 	let title = "TITLE";
@@ -13,16 +14,16 @@
 		"Base", "Line", "Circle", "Frame"
 	];
 
-	let dataN = 1;
+	let data =[];
+	let dataN = 0;
 	let design = 0;
 
 	function saveColor(){
-		localStorage.setItem("data"+dataN, JSON.stringify(colors));
+		localStorage.setItem("data"+dataN, JSON.stringify([colors, title, design]));
 		
 		let value = localStorage.getItem('data'+dataN);
 		if (value !== null) {
-			const retrievedColors = JSON.parse(value);
-			console.log('값:', dataN, retrievedColors);
+			data[dataN] = JSON.parse(value);
 		} 
 		else {
 			console.log('데이터가 없습니다.');
@@ -33,7 +34,6 @@
 
 	function changeDesign(n){
 		design = n.idx;
-		console.log(design);
 	}
 
 	window.onload = function() {
@@ -55,24 +55,30 @@
 			});
 		});
 
-	const openPopup = document.querySelector(".menu");
-	const closePopup = document.getElementById('closePopup');
-	const modal = document.getElementById('menuPopup');
+		const openPopup = document.querySelector(".menu");
+		const closePopup = document.getElementById('closePopup');
+		const modal = document.getElementById('menuPopup');
 
-	openPopup.addEventListener('click', function() {
-		modal.style.display = 'block';
-	});
+		openPopup.addEventListener('click', function() {
+			modal.style.display = 'block';
+		});
 
-	closePopup.addEventListener('click', function() {
-		modal.style.display = 'none';
-	});
-
-	window.addEventListener('click', function(event) {
-		if(event.target == modal) {
+		closePopup.addEventListener('click', function() {
 			modal.style.display = 'none';
-		}
-	});
+		});
 
+		window.addEventListener('click', function(event) {
+			if(event.target == modal) {
+				modal.style.display = 'none';
+			}
+		});
+
+		for(let i=0; i<4; i++){
+			document.getElementById('colorPicker'+i).addEventListener('input', function() {
+				const selectedColor = this.value;
+				colors[i] = selectedColor.substring(1).toUpperCase();
+			});
+		}
 	}
 
 </script>
@@ -89,7 +95,14 @@
 	<div id="menuPopup" class="modal">
         <div class="modal-content">
             <span class="close" id="closePopup">&times;</span>
-            <p>팝업 내용을 입력하세요.</p>
+            {#if dataN == 0}
+				<div style="height: 50px; text-align: center;">Save a Palette!</div>
+			{:else}
+				<div style="height: 50px; text-align: center;">Saved Palette</div>
+				{#each data as d, idx}
+					<Dp {d}/>
+				{/each}
+			{/if}
         </div>
     </div>
 	
@@ -128,7 +141,7 @@
 			{#each colors as color, idx}
 			<div class="colorRGB">
 				<!--<button class="inFunc colorBoard" id="copy{idx}"><div style="margin-left: 2.8px; width:20px; height:20px; background-color: #{color}"></div></button>-->
-				<div class="inFunc colorBoard" id="copy{idx}" style="background-color: #{color}"></div>
+				<input type="color" class="inFunc colorBoard" id="colorPicker{idx}" value="#{color}"/>
 				<input class="inputRGB" bind:value="{color}" placeholder="{idx+1}" type="text"/>
 				<button class="inFunc copy buttonHover" id="copy{idx}"><img width="20px" height="20px" src="./images/copy.png" alt="copy"></button>
 			</div>
